@@ -38,13 +38,6 @@ def draw(probs, states = States, returnvotes = False):
         return np.sum(votes), votes
     return np.sum(votes)
 
-#def montecarlo(runs, probs):
-#    out = []
-#    for i in tqdm(range(runs)):
-#        run = draw(probs)
-#        out.append(run)
-#    return out
-
 def montecarlo(runs, probs, errs = np.zeros(len(States))):
     out = []
     prob_pool = np.linspace(0, 1., 1000)
