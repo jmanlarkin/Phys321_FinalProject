@@ -22,18 +22,18 @@ States = sorted(['Alaska', 'Alabama', 'Arkansas', 'Arizona', 'California',
           'Tennessee', 'Texas', 'Utah', 'Virginia', 'Vermont', 'Washington', 
           'Wisconsin', 'West Virginia', 'Wyoming'])
 
-Voteshare = [9, 3, 11, 6, 55, 9, 7, 3, 3, 29, 16, 4, 4, 20, 11, 6, 6, 
+voteshare = [9, 3, 11, 6, 55, 9, 7, 3, 3, 29, 16, 4, 4, 20, 11, 6, 6, 
             8, 8, 4, 10, 11, 16, 10, 6, 10, 3, 5, 6, 4, 14, 5, 29, 15, 
             3, 18, 7, 7, 20, 4, 9, 3, 11, 38, 6, 3, 13, 12, 5, 10, 3]
 
-def draw(probs, States = States, returnvotes = False):
+def draw(probs, states = States, returnvotes = False):
     votes = []
     for i in range(len(States)):
         prob = probs[i]
         p = [1 - prob, prob]
         vote = np.random.choice([0, 1], replace = True, p = p)
         votes.append(vote)
-    votes *= np.asarray(Voteshare)
+    votes *= np.asarray(voteshare)
     if returnvotes == True:
         return np.sum(votes), votes
     return np.sum(votes)
