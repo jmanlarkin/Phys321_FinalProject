@@ -2,7 +2,7 @@
 Repository for Phys 321 final project on presidential election modeling. 
 
 The only files we want to be graded on are:
-Modeling.ipynb
+Modeling.ipynb and 
 montecarlo.py
 
 Jonathan also has the .csv file containing the simulation results locally.
