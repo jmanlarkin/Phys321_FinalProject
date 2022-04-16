@@ -53,6 +53,9 @@ def draw(mean, cov, states = states):
 
 #Run montecarlo sampling with above method for given number of runs
 #tqdm wrapped around iterable range allows for convenient progress bar
+
+#Ended up using montecarlo for democratic candidate mean/cov values
+
 def montecarlo(runs, mean, cov):
     electoral_college_votes = []
     popular_votes = []
@@ -65,8 +68,8 @@ def montecarlo(runs, mean, cov):
     popular_votes = np.asarray(popular_votes)
     
     #Electoral College
-    electoral_win = len(electoral_college_votes[electoral_college_votes > 270]) / runs
-    electoral_tie = len(electoral_college_votes[electoral_college_votes == 270]) / runs
+    electoral_win = len(electoral_college_votes[electoral_college_votes > 269]) / runs
+    electoral_tie = len(electoral_college_votes[electoral_college_votes == 269]) / runs
     electoral_mean = np.mean(electoral_college_votes)
     
     #Popular Vote
@@ -77,3 +80,60 @@ def montecarlo(runs, mean, cov):
     
     return [electoral_college_votes, electoral_win, electoral_tie, electoral_mean, popular_votes, 
             popular_win, popular_landslide_win, popular_landslide_loss, popular_mean]
+
+# Function used to compute montecarlo for republican candidate from the democratic candidate mean/cov
+# Only difference is once probs are drawn, the weights are exchanged in the function which flips weighted coin
+
+def draw_rep(mean, cov, states = states):
+    probs = np.random.multivariate_normal(mean, cov)
+    college_win = []
+    
+    #from drawn multivariate probabilites, flips weighted coin to determine which states are won
+    for i in range(len(states)):
+        prob = probs[i]
+        p = [prob, 1 - prob]
+        if (prob <= 0):
+            college_win.append(1)
+            continue
+        if (prob >= 1):
+            college_win.append(0)
+            continue
+        vote_boolean = np.random.choice([0, 1], replace = True, p = p)
+        college_win.append(vote_boolean) 
+        
+    #Popular Vote Results
+    votes = (probs * votes_2016).astype(int)
+    popular_vote = np.sum(votes)
+    popular_voteshare = popular_vote / np.sum(votes_2016)
+    
+    #Electoral College Results
+    college_win *= np.asarray(college_weights)
+    college_votes = np.sum(college_win)
+    
+    return [college_votes, popular_voteshare]
+
+def montecarlo_rep(runs, mean, cov):
+    electoral_college_votes = []
+    popular_votes = []
+    for i in tqdm(range(runs)):
+        college_votes, popular_voteshare = draw_rep(mean, cov)
+        electoral_college_votes.append(college_votes)
+        popular_votes.append(popular_voteshare)
+    
+    electoral_college_votes = np.asarray(electoral_college_votes)
+    popular_votes = np.asarray(popular_votes)
+    
+    #Electoral College
+    electoral_win = len(electoral_college_votes[electoral_college_votes > 269]) / runs
+    electoral_tie = len(electoral_college_votes[electoral_college_votes == 269]) / runs
+    electoral_mean = np.mean(electoral_college_votes)
+    
+    #Popular Vote
+    popular_win = len(popular_votes[popular_votes > 0.5]) / runs
+    popular_landslide_win = len(popular_votes[popular_votes >= 0.55]) / runs
+    popular_landslide_loss = len(popular_votes[popular_votes <= 0.45]) / runs
+    popular_mean = np.mean(popular_votes)
+    
+    return [electoral_college_votes, electoral_win, electoral_tie, electoral_mean, popular_votes, 
+            popular_win, popular_landslide_win, popular_landslide_loss, popular_mean]
+

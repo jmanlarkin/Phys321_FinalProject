@@ -1,0 +1,8 @@
+During the first week, Jonathan and Shilin both did the coding. Jonathan worked on the Monte Carlo
+for simulating the elections while Shilin worked on building a MCMC framework to get posterior distributions
+from the data.
+
+During the second week, Jonathan did most of the coding (debugging likelihood, download data, running simulations).
+Shilin got started with the final report.
+
+During the last week, Jonathan ran the simulation for one last time and both worked on the final report.
